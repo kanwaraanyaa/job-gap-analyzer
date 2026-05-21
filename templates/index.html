@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>AI Job Gap Analyzer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            text-align: center;
+            color: #00e6e6;
+        }
+
+        textarea, input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #00e6e6;
+            color: black;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .results {
+            margin-top: 30px;
+            background: rgba(0,0,0,0.4);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .badge {
+            background: #00e6e6;
+            color: black;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        .ai-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.6);
+            border-left: 5px solid #00e6e6;
+            border-radius: 10px;
+            white-space: pre-wrap;
+        }
+
+        a {
+            color: #00e6e6;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>☁️ AI Job Gap Analyzer</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <label>📄 Upload Resume (PDF)</label>
+        <input type="file" name="resume_pdf" required>
+
+        <label>💼 Paste Job Description</label>
+        <textarea name="job_desc" rows="6" placeholder="Paste job description here..." required></textarea>
+
+        <button type="submit">🔍 Analyze Skill Gap</button>
+    </form>
+
+    {% if result %}
+    <div class="results">
+        <h3>📊 ATS Resume Score</h3>
+<div style="background:#333;border-radius:10px;width:100%;height:25px;">
+    <div style="
+        width: {{ result.ats_score }}%;
+        background:#00e6e6;
+        height:25px;
+        border-radius:10px;
+        text-align:center;
+        color:black;
+        font-weight:bold;">
+        {{ result.ats_score }}%
+    </div>
+</div>
+
+        <h2>📊 Match Score: {{ result.score }}%</h2>
+
+        <h3>🚨 Missing Skills:</h3>
+        {% for skill in result.gap %}
+            <span class="badge">{{ skill }}</span>
+        {% endfor %}
+
+        <h3>⚠️ Resume Weakness:</h3>
+        <ul>
+        {% for w in result.weakness %}
+            <li>{{ w }}</li>
+        {% endfor %}
+        </ul>
+
+        <h3>🎓 Recommended Courses:</h3>
+        <ul>
+        {% for c in result.courses %}
+            <li><a href="{{ c.link }}" target="_blank">{{ c.name }}</a></li>
+        {% endfor %}
+        </ul>
+        <h3>📄 Download Analysis Report</h3>
+<a href="{{ result.pdf }}" download>
+    <button>⬇ Download Report</button>
+</a>
+
+        <h3>🤖 AI Career Feedback (Gemini):</h3>
+        <div class="ai-box">
+            {{ result.ai_feedback }}
+        </div>
+    </div>
+    <script>
+var ctx = document.getElementById('skillChart');
+
+var skillChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+        labels: ["Skill Match", "Resume Quality", "Keyword Match", "Experience", "Projects"],
+        datasets: [{
+            label: "Profile Strength",
+            data: [
+                {{ result.score }},
+                70,
+                65,
+                60,
+                75
+            ],
+            backgroundColor: "rgba(0,230,230,0.2)",
+            borderColor: "#00e6e6"
+        }]
+    }
+});
+</script>
+    {% endif %}
+</div>
+</body>
+</html>

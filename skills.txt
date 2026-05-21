@@ -1,0 +1,22 @@
+python
+java
+sql
+machine learning
+deep learning
+data analysis
+cloud computing
+aws
+azure
+flask
+django
+react
+html
+css
+javascript
+spring boot
+mongodb
+mysql
+tensorflow
+nlp
+data structures
+algorithms
